@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- saved from url=(0093)https://ngammarano.github.io/microbit-web-bluetooth/microbit-web-bluetooth-accelerometer.html -->
+<html>
+    <head>
+        <link rel="stylesheet" href="microbit-accel_files/styles.css">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Web Bluetooth micro:bit Accelerometer</title>
+        <style>
+            .x.axis line {
+              shape-rendering: auto;
+            }
+
+/*            .line {
+              fill: none;
+              stroke: #000;
+              stroke-width: 1.5px;
+            }*/
+        </style>
+            <!-- <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> -->
+            <!-- <script src='https://d3js.org/d3.v4.min.js'></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script>
+
+    </head>
+    <script type="text/javascript">
+        var recordList = [];
+        var rls = {"x": [], "y": [], "z": [], "ts": []};
+        var ax = 0; var ay = 0; var az = 0;
+        var recording = false;
+    </script>
+    <body id="body" style="background-color: rgb(208, 255, 208);" class="vsc-initialized">
+        <h1>Web Bluetooth micro:bit Accelerometer</h1>
+
+        <p>Scan Bluetooth devices (using "BBC micro:bit" as namePrefix filter). Allows to interact with the micro:bit using the Bluetooth Accelerometer service.<br>Example MakeCode micro:bit project <a href="https://makecode.microbit.org/_i2cRUvcd34Ai" target="_blank">here</a> (or <a href="https://makecode.microbit.org/#pub:_i2cRUvcd34Ai" target="_blank">here</a> to open in MakeCode directly).</p>
+    
+    
+        <button onclick="connect()">Connect</button>
+        <button onclick="disconnect()">Disconnect</button>
+        <button onclick="setRecord(true)">Start Record</button>
+        <button onclick="setRecord(false)">Stop Record</button>
+        <button onclick="clearMemory()">Reset data</button>
+        <!-- <script src="./microbit-accel_files/grapher.js"></script> -->
+
+        <h2>Accelerometer Data (mg)</h2>
+        <!-- <div id="chart"></div> -->
+        <script src="./microbit-accel_files/WorkingGraph.js"></script>
+        <!-- <script src="./microbit-accel_files/testGraph.js"></script> -->
+        </div>
+
+       
+        <table>
+            <tbody><tr>
+                <td>x:</td>
+                <td id="accelerometerX">-</td>
+            </tr>
+            <tr>
+                <td>y:</td>
+                <td id="accelerometerY">-</td>
+            </tr>
+            <tr>
+                <td>z:</td>
+                <td id="accelerometerZ">-</td>
+            </tr>
+        </tbody></table>
+        <h2>Accelerometer Period (ms)</h2>
+        <input type="text" id="accelerometerPeriodText" disabled="true">
+        <button onclick="readAccelerometerPeriod()">Read</button>
+        <br>
+        <select id="accelerometerPeriodSelect">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="80">80</option>
+            <option value="160">160</option>
+            <option value="640">640</option>
+        </select>
+        <button onclick="writeAccelerometerPeriod()">Write</button>
+        <h2>Log <button onclick="clearLog()">Clear</button></h2>
+        <p id="log" style="font-family:&#39;Courier New&#39;,Courier,monospace">Requesting micro:bit Bluetooth devices... <font color="green">OK</font><br>Connecting to GATT server (name: <font color="blue">BBC micro:bit [vezet]</font>, ID: <font color="blue">NM00tM+ioo1GOdCxqC0/rg==</font>)... <b><font color="red">NetworkError: Unsupported device.</font></b><br>Requesting micro:bit Bluetooth devices... <b><font color="red">NotFoundError: User cancelled the requestDevice() chooser.</font></b><br>Requesting micro:bit Bluetooth devices... <b><font color="red">NotFoundError: User cancelled the requestDevice() chooser.</font></b><br>Requesting micro:bit Bluetooth devices... <b><font color="red">NotFoundError: User cancelled the requestDevice() chooser.</font></b><br></p>
+    <script src="./microbit-accel_files/microbit-web-bluetooth-accelerometer.js"></script>
+</body></html>

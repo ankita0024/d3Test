@@ -1,0 +1,49 @@
+body {
+  /* background: #000; */
+  margin: 0;
+  padding: 0;
+  font: 10px sans-serif;
+}
+
+text {
+  fill: black;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #333;
+  shape-rendering: crispEdges; 
+}
+
+.axis path {
+  stroke: #aaa;
+}
+
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 2px;
+}
+
+.data {
+  stroke: red;
+  stroke-width: 2px;
+}
+
+.average-50 {
+  stroke: #0ff;
+}
+
+.average-25 {
+  stroke: #ff0;
+}
+
+.tooltip {
+  font-family: Georgia;
+  font-size: 150%;
+  }
+
+  .brush {
+    fill: none;
+    }
