@@ -397,7 +397,7 @@ function round10 (val) {
 
 function setRecord(val) { recording = val; }
 // function stopRecord() { recording = false; }
-function clearMemory() { recordList = []; rls = {"x": [], "y": [], "z": [], "ts": []};}
+function clearMemory() { recordList = []; rls = [];}
 
 
 function accelerometerDataChanged(vals) {
@@ -418,7 +418,8 @@ function accelerometerDataChanged(vals) {
         const date = new Date().getTime();
         recordList.push({x, y, z, date});
         // console.log("recordList----",recordList);
-        rls["x"].push(x); rls["y"].push(y); rls["z"].push(z); rls["ts"].push(new Date());
+        rls.push({"x": x, "y": y, "z": z, "date": date})
+        // rls["x"].push(x); rls["y"].push(y); rls["z"].push(z); rls["ts"].push(new Date());
     }
 }
 
