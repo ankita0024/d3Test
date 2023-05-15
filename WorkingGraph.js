@@ -7,7 +7,7 @@ var margin = { top: 10, right: 10, bottom: 100, left: 40 },
   height = 500 - margin.top - margin.bottom,
   height2 = 500 - margin2.top - margin2.bottom;
 let sources = [];
-
+var refreshChart;
 var myBrush;
 var color = d3.scale.category10();
 var parseDate = d3.time.format("%Y-%m-%d %H:%M:%S");
@@ -105,6 +105,76 @@ let graph2 = svg
 //     .append('text')
 //     .text(d => d[0])
 //     .attr('transform', (d, i) => `translate(10, ${i * 15 + 4})`);
+var mainLineGroups = main.selectAll("g").data(sources).enter().append("g");
+
+mainLineGroups
+  .append("path")
+  .attr("class", "line")
+  .attr("d", function (d) {
+    return line(d.values);
+  })
+  .style("stroke", function (d) {
+    return color(d.name);
+  })
+  .attr("clip-path", "url(#clip-path)");
+
+main
+  .append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.svg.axis().scale(x).orient("bottom"));
+
+main
+  .append("g")
+  .attr("class", "y axis")
+  .call(d3.svg.axis().scale(y).orient("left"));
+
+var graphLineGroups = graph2.selectAll("g").data(sources).enter().append("g");
+
+graphLineGroups
+  .append("path")
+  .attr("class", "line")
+  .attr("d", function (d) {
+    return line2(d.values);
+  })
+  .style("stroke", function (d) {
+    return color(d.name);
+  })
+  .attr("clip-path", "url(#clip-path)");
+
+// graph2.select(".x.axis2").remove();
+
+graph2
+  .append("g")
+  .attr("class", "x axis2")
+  .attr("transform", "translate(0," + height2 + ")")
+  .call(d3.svg.axis().scale(x2).orient("bottom"));
+
+myBrush = d3.svg
+  .brush()
+  .x(d3.scale.linear().range([0, width]))
+  .on("brush", brushed);
+
+var begin = x2(
+  new Date(x2.invert(x2.range()[1]).valueOf() - 1000 * 365 * 8 * 24 * 60 * 60)
+);
+var end = x2.range()[1];
+
+
+// graph2
+//   .append("g")
+//   .attr("class", "x brush")
+//   .call(myBrush)
+//   .selectAll("rect")
+//   .attr("y", 0)
+//   .attr("height", height2);
+main
+  .append("g")
+  .attr("class", "x brush")
+  .call(myBrush)
+  .selectAll("rect")
+  .attr("y", 0)
+  .attr("height", height);
 
 function tick() {
   color.domain(
@@ -142,120 +212,10 @@ function tick() {
   ]);
   x2.domain(x.domain());
   y2.domain(y.domain());
-
-  var mainLineGroups = main.selectAll("g").data(sources).enter().append("g");
-
-  mainLineGroups
-    .append("path")
-    .attr("class", "line")
-    .attr("d", function (d) {
-      return line(d.values);
-    })
-    .style("stroke", function (d) {
-      return color(d.name);
-    })
-    .attr("clip-path", "url(#clip-path)");
-
-  main
-    .append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.svg.axis().scale(x).orient("bottom"));
-
-  main
-    .append("g")
-    .attr("class", "y axis")
-    .call(d3.svg.axis().scale(y).orient("left"));
-
-  var graphLineGroups = graph2.selectAll("g").data(sources).enter().append("g");
-
-  graphLineGroups
-    .append("path")
-    .attr("class", "line")
-    .attr("d", function (d) {
-      return line2(d.values);
-    })
-    .style("stroke", function (d) {
-      return color(d.name);
-    })
-    .attr("clip-path", "url(#clip-path)");
-  
-  // graph2.select(".x.axis2").remove();
-
-  graph2
-    .append("g")
-    .attr("class", "x axis2")
-    .attr("transform", "translate(0," + height2 + ")")
-    .call(d3.svg.axis().scale(x2).orient("bottom"));
-
-  myBrush = d3.svg
-    .brush()
-    .x(d3.scale.linear().range([0, width]))
-    .on("brush", brushed);
-
-  var begin = x2(
-    new Date(x2.invert(x2.range()[1]).valueOf() - 1000 * 365 * 8 * 24 * 60 * 60)
-  );
-  var end = x2.range()[1];
-  console.log("begin",begin);
-  console.log("end-",end);
-
-  graph2
-    .append("g")
-    .attr("class", "x brush")
-    .call(myBrush)
-    .selectAll("rect")
-    .attr("y", 0)
-    .attr("height", height2)
-    .attr("x", begin)
-    .attr("width", end - begin);
   refreshChart();
 }
 
-function refreshChart() {
-  // sources.forEach(function (s) {
-  //   var lastDate = new Date(
-  //     s.values[s.values.length - 1].date.setMonth(
-  //       s.values[s.values.length - 1].date.getMonth() + 1
-  //     )
-  //   );
-  //   var value = s.values.shift().value;
-  //   s.values.push({ date: lastDate, value: value });
-  // });
-
-  x2.domain([
-    d3.min(sources, function (c) {
-      return d3.min(c.values, function (v) {
-        return v.date;
-      });
-    }),
-    d3.max(sources, function (c) {
-      return d3.max(c.values, function (v) {
-        return v.date;
-      });
-    }),
-  ]);
-
-  y2.domain([
-    d3.min(sources, function (c) {
-      return d3.min(c.values, function (v) {
-        return v.value;
-      });
-    }),
-    d3.max(sources, function (c) {
-      return d3.max(c.values, function (v) {
-        return v.value;
-      });
-    }),
-  ]);
-
-  // var bs = myBrush.brushSelection();
-  // if (bs) {
-  //   x.domain([x2.invert(bs[0]), x2.invert(bs[1])]);
-  // } else {
-  //   x.domain(x2.domain());
-  // }
-  // y.domain(y2.domain());
+ function refreshChart() {
 
   var updateMainData = main.selectAll("path.line").data(sources);
   updateMainData
@@ -280,7 +240,6 @@ function refreshChart() {
     });
 
   updateMainData.exit().remove();
-  console.log("sources---", sources);
 
   var updateGraph2Data = graph2.selectAll("path.line").data(sources);
   updateGraph2Data
@@ -317,46 +276,22 @@ setInterval(() => {
   }
 }, 60);
 
-// function brushed() {
-//   let brushExtent = brushX.extent();
-//   x.domain(brushExtent);
-
-//   $data.attr("d", line);
-//   $averages_25.attr("d", line);
-//   $averages_50.attr("d", line);
-
-//   x2.domain(brushExtent);
-//   let brushedData = latestData.filter((d, i) => {
-//     let xVal = i + time - num;
-//     return x2(xVal) >= brushExtent[0] && x2(xVal) <= brushExtent[1];
-//   });
-//   let yDom = d3.extent(brushedData);
-//   yDom[0] = Math.max(yDom[0] - 1, 0);
-//   yDom[1] += 1;
-//   y2.domain(yDom);
-
-//   $brushedData.datum(brushedData).attr("d", line2);
-
-//   $brush.call(brushX.extent([x.domain()[0], x.domain()[1]]));
-// }
 function brushed() {
-  var s = myBrush.extent();
+  var extent = myBrush.extent();
 
-  x.domain(
-    myBrush.empty()
-      ? x2.domain()
-      : [x2.invert(s[0]), x2.invert(s[1])]
-  );
-
-  main.selectAll("path.line").attr("d", function(d) {
-    return line(d.values);
+  var selectedData = sources.filter(function(source) {
+    return {
+      name: source.name,
+      values: source.values.filter(function(d) {
+        return (
+          d.date >= extent[0][0] &&
+          d.date <= extent[1][0] &&
+          d.value >= extent[0][1] &&
+          d.value <= extent[1][1]
+        );
+      })
+    };
   });
-  main.select(".x.axis").call(d3.svg.axis().scale(x).orient("bottom"));
-  main.select(".y.axis").call(d3.svg.axis().scale(y).orient("left"));
+  console.log("selectedData",selectedData);
 }
 
-Date.prototype.addMonths = function(months) {
-  var dat = new Date(this.valueOf());
-  dat.setMonth(dat.getMonth() + months);
-  return dat;
-};
